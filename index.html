@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GITA:Dsamsar — Companion of Life</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f7f3ed;color:#27231f}
+header{padding:28px 7%;background:linear-gradient(135deg,#39265f,#7653a8);color:white}
+.brand{font-size:28px;font-weight:800}.tag{opacity:.9;margin-top:6px}
+main{max-width:900px;margin:30px auto;padding:0 20px}
+.card{background:white;border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+#chat{min-height:360px;display:flex;flex-direction:column;gap:14px;margin-bottom:18px}
+.msg{padding:14px 17px;border-radius:15px;max-width:85%;white-space:pre-wrap;line-height:1.55}
+.user{align-self:flex-end;background:#e8ddf7}.bot{align-self:flex-start;background:#f3efe9}
+form{display:flex;gap:10px}textarea{flex:1;border:1px solid #ddd;border-radius:12px;padding:14px;font-size:15px;resize:none}button{border:0;border-radius:12px;padding:0 22px;background:#5d3b86;color:white;font-weight:700;cursor:pointer}
+small{color:#756e68}.sources{margin-top:10px;font-size:12px;color:#6c625b}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">GITA:Dsamsar</div>
+  <div class="tag">Companion of Life · Ancient wisdom, contextual guidance</div>
+</header>
+<main>
+<div class="card">
+  <div id="chat">
+    <div class="msg bot">Namaste. I’m GITA:Dsamsar. 🌿<br><br>Tell me what you're going through — a decision, fear, stress, relationships, work, or anything else.</div>
+  </div>
+  <form id="form">
+    <textarea id="message" rows="3" placeholder="What is on your mind?"></textarea>
+    <button>Ask</button>
+  </form>
+  <small>GITA:Dsamsar provides reflective guidance inspired by sacred texts; it is not a substitute for professional advice.</small>
+</div>
+</main>
+<script>
+const form=document.getElementById('form'), input=document.getElementById('message'), chat=document.getElementById('chat');
+function add(text, cls){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=text.replace(/\\n/g,'<br>');chat.appendChild(d);chat.scrollTop=chat.scrollHeight;}
+form.addEventListener('submit',async e=>{
+ e.preventDefault(); const message=input.value.trim(); if(!message)return;
+ add(message,'user'); input.value=''; add('Thinking…','bot');
+ const loading=chat.lastElementChild;
+ try{
+   const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message})});
+   const data=await r.json(); loading.remove(); add(data.response||'I could not generate a response.','bot');
+ }catch(err){loading.remove();add('Something went wrong. Check that the server and Gemini API key are configured.','bot');}
+});
+</script>
+</body>
+</html>
